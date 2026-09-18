@@ -3,12 +3,16 @@
 
 Aplicação interativa em Python para exploração e análise estatística utilizando o dataset [*Video Game Sales with Ratings*](https://www.kaggle.com/datasets/rush4ratio/video-game-sales-with-ratings). A aplicação foi construída por uma biblioteca de estatística própria (`minhastats`), sem utilizar funções existentes do NumPy/SciPy para cálculos estatísticos. Tais funções foram utilizados somente como referência nos testes automatizados para validar as funções em `minhastats`.
 
+Desenvolvido por:
+  - Maria Clara Canuto Gontijo
+  - Matrícula (RA): 72601725
+
 > ⚠️ Projeto em Desenvolvimento: Este README cobre apenas o que foi implementado até o momento e cumpre o papel de referência para a dev. Critérios e módulos não implementados serão documentados em breve.
 
 ## Estrutura do projeto
  
 ```
-Interactive-Statistic-LAB/
+PostGame/
 ├── app.py                  # Aplicação Streamlit (carregamento e visualização inicial dos dados)
 ├── data/
 │   └── dataset.csv         # Dataset: Video Game Sales with Ratings
@@ -34,7 +38,7 @@ Interactive-Statistic-LAB/
 
 1. Clone o repositório do projeto
 ```bash
-  git clone https://github.com/m0yo/Interactive-Statistic-LAB.git
+  git clone https://github.com/m0yo/PostGame.git
 ```
 
 2. Crie e rode um ambiente virtual
