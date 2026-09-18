@@ -1,6 +1,7 @@
 import numpy as np
 import pytest
-from minhastats.desc import media, mediana, moda, amplitude, variancia, desvio_padrao, percentil, quartis, iqr, coef_var
+from scipy import stats
+from minhastats.desc import media, mediana, moda, amplitude, variancia, desvio_padrao, percentil, quartis, iqr, coef_var, covariancia, corr_pearson
 
 # Testes da função media ===============================================================================
 def test_media_simple():
@@ -161,3 +162,47 @@ def test_coef_var_simple():  # compara o CV com o cálculo manual via numpy
 def test_coef_var_media_zero():  # média zero deve lançar erro
     with pytest.raises(ValueError):
         coef_var([-3, 0, 3])
+
+# Teste covariancia ===============================================================================
+def test_covariancia_simple():  # compara com np.cov
+    x = [1, 2, 3, 4, 5]
+    y = [2, 4, 5, 4, 5]
+
+    expected = np.cov(x, y, ddof=1)[0][1]
+    result = covariancia(x, y)
+
+    assert result == pytest.approx(expected, abs=1e-6)
+
+def test_covariancia_pop():  # versão populacional (ddof=0)
+    x = [1, 2, 3, 4, 5]
+    y = [2, 4, 5, 4, 5]
+
+    expected = np.cov(x, y, ddof=0)[0][1]
+    result = covariancia(x, y, amostral=False)
+
+    assert result == pytest.approx(expected, abs=1e-6)
+
+def test_covariancia_diff():  # x e y devem ter o mesmo tamanho
+    with pytest.raises(ValueError):
+        covariancia([1, 2, 3], [1, 2])
+
+def test_covariancia_vazia():  # listas vazias devem lançar erro
+    with pytest.raises(ValueError):
+        covariancia([], [])
+
+# Teste correlação pearson ===============================================================================
+def test_corr_pearson_simple():  # compara com scipy.stats.pearsonr
+    x = [1, 2, 3, 4, 5]
+    y = [2, 4, 5, 4, 5]
+
+    expected = stats.pearsonr(x, y)[0]
+    result = corr_pearson(x, y)
+
+    assert result == pytest.approx(expected, abs=1e-6)
+
+def test_corr_pearson_constante():  # correlação indefinida quando uma variável é constante
+    x = [1, 2, 3, 4, 5]
+    y = [7, 7, 7, 7, 7]
+
+    with pytest.raises(ValueError):
+        corr_pearson(x, y)

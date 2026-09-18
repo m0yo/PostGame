@@ -126,7 +126,49 @@ def iqr(dados):
 # se dá por: CV = desvio_padrao / média
 def coef_var(dados, amostral=True):
     med = media(dados)
-    
+
     if med == 0:
         raise ValueError("Coeficiente de variação indefinido quando a média é zero.")
     return desvio_padrao(dados, amostral=amostral) / med
+
+# A covariância mede se duas variáveis "andam juntas": positiva quando crescem juntas, negativa quando uma cresce e a outra decresce, perto de zero quando
+# não há relação linear clara. Trabalha com pares (x_i, y_i)
+# se dá por: cov = (somatório de (x_i - média_x)*(y_i - média_y)) / divisor
+# (divisor = n-1 para amostral, n para populacional)
+def covariancia(x, y, amostral=True):
+    dx = _validate(x)
+    dy = _validate(y)
+
+    if len(dx) != len(dy):
+        raise ValueError("x e y devem ter o mesmo tamanho.")
+
+    n = len(dx)
+    if amostral and n == 1:
+        raise ValueError("Para o cálculo da covariância amostral, a quantidade de pares precisa ser maior que 1.")
+
+    mx = media(dx)
+    my = media(dy)
+
+    sum_q = 0.0
+    for xi, yi in zip(dx, dy):
+        sum_q += (xi - mx) * (yi - my)
+
+    if amostral:
+        return sum_q / (n - 1)
+    else:
+        return sum_q / n
+
+
+# A correlação de Pearson é a covariância "normalizada" pelos desvios padrão
+# de x e y, sempre entre -1 e 1, o que facilita interpretar a força e direção
+# da relação linear entre as duas variáveis, independente da escala de cada uma
+# Se dá por: r = cov(x, y) / (desvio_padrao(x) * desvio_padrao(y))
+def corr_pearson(x, y):
+    cov = covariancia(x, y, amostral=True)
+    dpx = desvio_padrao(x, amostral=True)
+    dpy = desvio_padrao(y, amostral=True)
+
+    if dpx == 0 or dpy == 0:
+        raise ValueError("Correlação indefinida quando uma variável é constante.")
+
+    return cov / (dpx * dpy)
