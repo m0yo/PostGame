@@ -56,3 +56,9 @@ def moda(dados):
             modas.append(valor)
 
     return modas
+
+# Amplitude é dada pela diferença entre o maior e o menor dado de uma listagem
+
+def amplitude(dados):
+    d = _validate(dados)
+    return max(d) - min(d)
