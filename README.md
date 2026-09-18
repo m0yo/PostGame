@@ -48,4 +48,27 @@ Interactive-Statistic-LAB/
 ```bash
   pip install requirements.txt
 ```
-🚧 EM CONSTRUÇÃO 🚧
+
+4. Rode a aplicação:
+```bash
+ streamlit run app.py
+```
+A aplicação abrirá no navegador, exibindo o dataset carregado, o formato dos dados e a separação entre colunas numéricas e categóricas.
+
+5. Rode os testes automatizados:
+```bash
+   pytest
+```
+Os testes em `tests/test_desc.py` validam as funções de `minhastats/desc.py` (média, mediana e moda) comparando os resultados com o NumPy, usando tolerância numérica (`pytest.approx`).
+
+## Estado atual
+ 
+- [x] Carregamento do dataset e visualização inicial (`app.py`)
+- [x] Implementação própria de média, mediana e moda (`minhastats/desc.py`)
+- [x] Testes automatizados para as funções implementadas
+- [ ] Medidas de dispersão (variância, desvio padrão, etc.)
+- [ ] Estatística descritiva interativa completa
+- [ ] Probabilidade e simulação Monte Carlo
+- [ ] Distribuições teóricas
+- [ ] Correlação e regressão linear
+- [ ] Relatório de descobertas
