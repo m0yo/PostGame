@@ -5,4 +5,5 @@
 .streamlit/secrets.toml
 .vscode/
 .minhastats/__pycache__/
+.minhastats/__pycache__/desc.cpython-314.pyc
 .tests/__pycache__/

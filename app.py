@@ -106,19 +106,23 @@ if var in col_num:
     col_e, col_f = st.columns(2)
 
     with col_e:
-        fig_hist, ax_hist = plt.subplots(figsize=(5, 2.81))
+        fig_hist, ax_hist = plt.subplots(figsize=(6, 4))
         ax_hist.hist(dados_var, bins=limits, edgecolor="black")
         ax_hist.set_xlabel(var)
         ax_hist.set_ylabel("Frequência")
         ax_hist.set_title(f"Histograma de {var}")
-        st.pyplot(fig_hist)
+        fig_hist.tight_layout()
+        fig_hist.subplots_adjust(left=0.15, right=0.95, top=0.9, bottom=0.15)
+        st.pyplot(fig_hist, width='content')
 
     with col_f:
         fig_box, ax_box = plt.subplots(figsize=(6, 3))
         ax_box.boxplot(dados_var)
         ax_box.set_xlabel(var)
         ax_box.set_title(f"Boxplot de {var}")
-        st.pyplot(fig_box)
+        fig_box.tight_layout()
+        fig_hist.subplots_adjust(left=0.15, right=0.95, top=0.9, bottom=0.15)
+        st.pyplot(fig_box, width='content')
 
 
 else:
@@ -130,10 +134,27 @@ else:
     cat_tabela_f.columns = [var, "Frequência"]
     st.dataframe(cat_tabela_f)
 
-    fig_bar, ax_bar = plt.subplots(figsize=(6, 4))
-    ax_bar.bar(cat_tabela_f[var], cat_tabela_f["Frequência"])
-    ax_bar.set_xlabel(var)
-    ax_bar.set_ylabel("Frequência")
-    ax_bar.set_title(f"Distribuição de {var}")
-    plt.xticks(rotation=45, ha="right")
-    st.pyplot(fig_bar)
+    top_n = 10  # ajuste esse número como preferir
+
+    st.subheader("Gráficos")
+    if len(cat_tabela_f) > top_n:
+        dados_grafico = cat_tabela_f.head(top_n)
+        st.caption(f"Mostrando as {top_n} categorias mais frequentes de {len(cat_tabela_f)} totais")
+    else:
+        dados_grafico = cat_tabela_f
+
+    col_g, col_h = st.columns(2)
+    with col_g:
+        fig_bar, ax_bar = plt.subplots(figsize=(6, 4))
+        ax_bar.bar(dados_grafico[var], dados_grafico["Frequência"])
+        ax_bar.set_xlabel(var)
+        ax_bar.set_ylabel("Frequência")
+        ax_bar.set_title(f"Distribuição de {var}")
+        plt.xticks(rotation=45, ha="right")
+        st.pyplot(fig_bar)
+
+    with col_h:
+        fig_pizza, ax_pizza = plt.subplots(figsize=(6, 4))
+        ax_pizza.pie(dados_grafico["Frequência"], labels=dados_grafico[var], autopct="%1.1f%%")
+        ax_pizza.set_title(f"Distribuição de {var} (top {top_n})")
+        st.pyplot(fig_pizza)
