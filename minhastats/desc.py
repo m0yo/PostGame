@@ -1,3 +1,5 @@
+import math
+
 # A função a seguir valida se a listagem de dados é vazia ou não e depois devolve os dados
 def _validate(dados):
     x = len(dados)
@@ -126,7 +128,101 @@ def iqr(dados):
 # se dá por: CV = desvio_padrao / média
 def coef_var(dados, amostral=True):
     med = media(dados)
-    
+
     if med == 0:
         raise ValueError("Coeficiente de variação indefinido quando a média é zero.")
     return desvio_padrao(dados, amostral=amostral) / med
+
+# A covariância mede se duas variáveis "andam juntas": positiva quando crescem juntas, negativa quando uma cresce e a outra decresce, perto de zero quando
+# não há relação linear clara. Trabalha com pares (x_i, y_i)
+# se dá por: cov = (somatório de (x_i - média_x)*(y_i - média_y)) / divisor
+# (divisor = n-1 para amostral, n para populacional)
+def covariancia(x, y, amostral=True):
+    dx = _validate(x)
+    dy = _validate(y)
+
+    if len(dx) != len(dy):
+        raise ValueError("x e y devem ter o mesmo tamanho.")
+
+    n = len(dx)
+    if amostral and n == 1:
+        raise ValueError("Para o cálculo da covariância amostral, a quantidade de pares precisa ser maior que 1.")
+
+    mx = media(dx)
+    my = media(dy)
+
+    sum_q = 0.0
+    for xi, yi in zip(dx, dy):
+        sum_q += (xi - mx) * (yi - my)
+
+    if amostral:
+        return sum_q / (n - 1)
+    else:
+        return sum_q / n
+
+
+# A correlação de Pearson é a covariância "normalizada" pelos desvios padrão
+# de x e y, sempre entre -1 e 1, o que facilita interpretar a força e direção
+# da relação linear entre as duas variáveis, independente da escala de cada uma
+# Se dá por: r = cov(x, y) / (desvio_padrao(x) * desvio_padrao(y))
+def corr_pearson(x, y):
+    cov = covariancia(x, y, amostral=True)
+    dpx = desvio_padrao(x, amostral=True)
+    dpy = desvio_padrao(y, amostral=True)
+
+    if dpx == 0 or dpy == 0:
+        raise ValueError("Correlação indefinida quando uma variável é constante.")
+
+    return cov / (dpx * dpy)
+
+# regra de Sturges éuma fórmula estatística usada para calcular o número ideal de classes 
+# ou intervalos em um histograma ou tabela de distribuição de frequências
+# ela se dá pela equação: k = 1 + 3,322 * (log (n))
+def regra_sturges(num):
+    if num <= 0:
+        raise ValueError("O número de dados deve ser maior que zero.") # retorna um erro se o valor for zero
+    x = 1 + 3.322 * (math.log10(num))
+
+    return math.ceil(x)
+
+# Outliers são valores atípicos que se afasta muito de um conjunto de dados.
+# A sua detectção pode ser feita usando interquantis (IQR), a regra é:
+# um valor é outlier se estiver abaixo de Q1 - 1.5*IQR ou acima de Q3 + 1.5*IQR
+def detec_outliers(dados):
+    d = _validate(dados)
+    val_q = quartis(d)
+    faixa = iqr(d)
+
+    lim_inf = val_q['Q1'] - 1.5*faixa
+    lim_sup = val_q["Q3"] + 1.5*faixa
+
+    outliers =[
+        x for x in d 
+        if x < lim_inf or x > lim_sup
+    ]
+
+    return {
+        "outliers": outliers,
+        "limite_inferior": lim_inf,
+        "limite_superior": lim_sup
+    }
+
+# interpreta a assimetria de uma distribuição comparando média e mediana:
+# se forem aproximadamente iguais (dentro de uma margem baseada no desvio padrão),
+# a distribuição é considerada simétrica; se a média for maior, assimetria positiva
+# (cauda à direita); se for menor, assimetria negativa (cauda à esquerda)
+def intr_assim(dados):
+    med = media(dados)
+    medn = mediana(dados)
+    dp = desvio_padrao(dados)
+
+    margem = 0.05 * dp
+
+    if margem > abs(med - medn):
+        return f"Distribuição aproximadamente simétrica (média {med:.2f} ≈ mediana {medn:.2f})."
+    
+    elif med > medn:
+        return f"Assimetria positiva, cauda à direita (média {med:.2f} ≈ mediana {medn:.2f})"
+
+    elif med < medn:
+        return f"Assimetria negativa, cauda à esquerda (média {med:.2f} ≈ mediana {medn:.2f})"

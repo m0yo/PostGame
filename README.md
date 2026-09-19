@@ -70,8 +70,8 @@ Os testes em `tests/test_desc.py` validam as funções de `minhastats/desc.py` (
 - [x] Carregamento do dataset e visualização inicial (`app.py`)
 - [x] Implementação própria de média, mediana e moda (`minhastats/desc.py`)
 - [x] Testes automatizados para as funções implementadas
-- [ ] Medidas de dispersão (variância, desvio padrão, etc.)
-- [ ] Estatística descritiva interativa completa
+- [x] Medidas de dispersão (variância, desvio padrão, etc.)
+- [x] Estatística descritiva interativa completa
 - [ ] Probabilidade e simulação Monte Carlo
 - [ ] Distribuições teóricas
 - [ ] Correlação e regressão linear
