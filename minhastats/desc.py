@@ -1,3 +1,5 @@
+import math
+
 # A função a seguir valida se a listagem de dados é vazia ou não e depois devolve os dados
 def _validate(dados):
     x = len(dados)
@@ -172,3 +174,55 @@ def corr_pearson(x, y):
         raise ValueError("Correlação indefinida quando uma variável é constante.")
 
     return cov / (dpx * dpy)
+
+# regra de Sturges éuma fórmula estatística usada para calcular o número ideal de classes 
+# ou intervalos em um histograma ou tabela de distribuição de frequências
+# ela se dá pela equação: k = 1 + 3,322 * (log (n))
+def regra_sturges(num):
+    if num <= 0:
+        raise ValueError("O número de dados deve ser maior que zero.") # retorna um erro se o valor for zero
+    x = 1 + 3.322 * (math.log10(num))
+
+    return math.ceil(x)
+
+# Outliers são valores atípicos que se afasta muito de um conjunto de dados.
+# A sua detectção pode ser feita usando interquantis (IQR), a regra é:
+# um valor é outlier se estiver abaixo de Q1 - 1.5*IQR ou acima de Q3 + 1.5*IQR
+def detec_outliers(dados):
+    d = _validate(dados)
+    val_q = quartis(d)
+    faixa = iqr(d)
+
+    lim_inf = val_q['Q1'] - 1.5*faixa
+    lim_sup = val_q["Q3"] + 1.5*faixa
+
+    outliers =[
+        x for x in d 
+        if x < lim_inf or x > lim_sup
+    ]
+
+    return {
+        "outliers": outliers,
+        "limite_inferior": lim_inf,
+        "limite_superior": lim_sup
+    }
+
+# interpreta a assimetria de uma distribuição comparando média e mediana:
+# se forem aproximadamente iguais (dentro de uma margem baseada no desvio padrão),
+# a distribuição é considerada simétrica; se a média for maior, assimetria positiva
+# (cauda à direita); se for menor, assimetria negativa (cauda à esquerda)
+def intr_assim(dados):
+    med = media(dados)
+    medn = mediana(dados)
+    dp = desvio_padrao(dados)
+
+    margem = 0.05 * dp
+
+    if margem > abs(med - medn):
+        return f"Distribuição aproximadamente simétrica (média {med:.2f} ≈ mediana {medn:.2f})."
+    
+    elif med > medn:
+        return f"Assimetria positiva, cauda à direita (média {med:.2f} ≈ mediana {medn:.2f})"
+
+    elif med < medn:
+        return f"Assimetria negativa, cauda à esquerda (média {med:.2f} ≈ mediana {medn:.2f})"

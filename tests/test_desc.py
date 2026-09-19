@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 from scipy import stats
-from minhastats.desc import media, mediana, moda, amplitude, variancia, desvio_padrao, percentil, quartis, iqr, coef_var, covariancia, corr_pearson
+from minhastats.desc import *
 
 # Testes da função media ===============================================================================
 def test_media_simple():
@@ -206,3 +206,20 @@ def test_corr_pearson_constante():  # correlação indefinida quando uma variáv
 
     with pytest.raises(ValueError):
         corr_pearson(x, y)
+
+# Teste regra struges ===============================================================================
+def test_sturges_simple():
+    assert regra_sturges(1000) == 11 # espera-se o valor 11
+    assert regra_sturges(100) == 8 # esepra-se o valor 8
+
+def test_struges_vazio():
+    with pytest.raises(ValueError):
+        regra_sturges(0)
+
+# Teste detecção de outliers ===============================================================================
+
+def test_detec_simple():
+    dados = [10, 12, 12, 13, 12, 11, 14, 13, 15, 10, 100]  # 100 é um outlier
+    resultado = detec_outliers(dados)
+    assert 100 in resultado["outliers"]
+    assert len(resultado["outliers"]) == 1

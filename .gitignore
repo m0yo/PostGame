@@ -1,6 +1,8 @@
-venv/
-__pycache__/
+.venv/
+.__pycache__/
 *.pyc
 .pytest_cache/
 .streamlit/secrets.toml
 .vscode/
+.minhastats/__pycache__/
+.tests/__pycache__/
