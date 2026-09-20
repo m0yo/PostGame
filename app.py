@@ -3,6 +3,7 @@ import pandas as pd
 from minhastats.desc import *
 import matplotlib.pyplot as plt
 import random
+from minhastats.regress import *
 
 st.set_page_config(page_title="Jogos", layout="wide")
 st.title("PostGame Stats!")
@@ -286,3 +287,50 @@ if st.button("Simular Teorema Central do Limite"):
     st.write(f"Média das médias amostrais: **{media(medias):.4f}**")
     st.write(f"Desvio padrão das médias amostrais: **{desvio_padrao(medias):.4f}**")
 
+st.divider()
+st.header("Correlação e Regressão Linear")
+
+col_x, col_y = st.columns(2)
+with col_x:
+    var_x = st.selectbox("Variável X:", col_num, key="var_x")
+with col_y:
+    var_y = st.selectbox("Variável Y:", col_num, key="var_y", index=1)
+
+if var_x == var_y:
+    st.warning("Escolha duas variáveis diferentes para X e Y.")
+else:
+    df_xy = df[[var_x, var_y]].dropna()
+    x_dados = df_xy[var_x].tolist()
+    y_dados = df_xy[var_y].tolist()
+
+    resultado = regress_lin(x_dados, y_dados)
+    a, b, r, r2 = resultado["a"], resultado["b"], resultado["r"], resultado["r2"]
+
+    fig_reg, ax_reg = plt.subplots(figsize=(8, 5))
+    ax_reg.scatter(x_dados, y_dados, alpha=0.4, label="Dados")
+
+    x_linha = [min(x_dados), max(x_dados)]
+    y_linha = [a + b * xi for xi in x_linha]
+    ax_reg.plot(x_linha, y_linha, color="red", linewidth=2, label="Reta de regressão")
+
+    ax_reg.set_xlabel(var_x)
+    ax_reg.set_ylabel(var_y)
+    ax_reg.set_title(f"{var_y} em função de {var_x}")
+    ax_reg.legend()
+    st.pyplot(fig_reg)
+
+    st.write(f"**Equação:** {var_y} = {a:.4f} + {b:.4f} × {var_x}")
+    st.write(f"**Correlação de Pearson (r):** {r:.4f}")
+    st.write(f"**R²:** {r2:.4f}")
+
+    st.info(
+    f"Para cada unidade a mais em {var_x}, "
+    f"{var_y} muda em média {b:.4f} unidades. "
+    f"Quando {var_x} = 0, o modelo prevê {var_y} = {a:.4f}.")
+
+    st.subheader("Predição Interativa")
+    x_input = st.number_input(f"Digite um valor de {var_x}:", value=float(media(x_dados)))
+    y_previsto = a + b * x_input
+    st.metric(f"{var_y} previsto", f"{y_previsto:.2f}")
+
+    st.warning("Correlação não implica causalidade! Uma relação estatística entre duas variáveis não significa que uma causa a outra.")
