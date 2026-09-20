@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import random
 from minhastats.regress import *
 
-st.set_page_config(page_title="Jogos", layout="wide")
+st.set_page_config(page_title="PostGame Stats App", layout="wide")
 st.title("PostGame Stats!")
 st.caption("Aplicação interativa em Python para exploração e análise estatística utilizando o dataset 'Video Game Sales with Ratings'")
 
@@ -194,7 +194,7 @@ if var in col_num:
         ax_dist.set_ylabel("Densidade")
         ax_dist.set_title(f"Ajuste da Distribuição Normal para {var}")
         ax_dist.legend()
-        st.pyplot(fig_dist)
+        st.pyplot(fig_dist, width='content')
 
     with col_h:
         st.subheader("Ajuste de Distribuição Exponencial")
@@ -210,7 +210,7 @@ if var in col_num:
         ax_exp.set_ylabel("Densidade")
         ax_exp.set_title(f"Ajuste da Distribuição Exponencial para {var}")
         ax_exp.legend()
-        st.pyplot(fig_exp)
+        st.pyplot(fig_exp, width='content')
 
 
 else:
@@ -239,13 +239,13 @@ else:
         ax_bar.set_ylabel("Frequência")
         ax_bar.set_title(f"Distribuição de {var}")
         plt.xticks(rotation=45, ha="right")
-        st.pyplot(fig_bar)
+        st.pyplot(fig_bar, width='content')
 
     with col_h:
         fig_pizza, ax_pizza = plt.subplots(figsize=(6, 4))
         ax_pizza.pie(dados_grafico["Frequência"], labels=dados_grafico[var], autopct="%1.1f%%")
         ax_pizza.set_title(f"Distribuição de {var} (top {top_n})")
-        st.pyplot(fig_pizza)
+        st.pyplot(fig_pizza, width='content')
 
 st.divider()
 st.header("Probabilidade e Simulação")
@@ -263,7 +263,7 @@ if st.button("Simular Lei dos Grandes Números"):
     ax_lgn.set_ylabel("Frequência relativa de 'cara'")
     ax_lgn.set_title("Convergência da Frequência Relativa")
     ax_lgn.legend()
-    st.pyplot(fig_lgn)
+    st.pyplot(fig_lgn, width='content')
 
     st.write(f"Frequência relativa final (após {n_lancamentos} lançamentos): **{freqs[-1]:.4f}**")
 
@@ -282,7 +282,7 @@ if st.button("Simular Teorema Central do Limite"):
     ax_tcl.set_xlabel(f"Média amostral de {var_tcl}")
     ax_tcl.set_ylabel("Frequência")
     ax_tcl.set_title(f"Distribuição das Médias Amostrais (n={tam_amostra}, repetições={n_rep})")
-    st.pyplot(fig_tcl)
+    st.pyplot(fig_tcl, width='content')
 
     st.write(f"Média das médias amostrais: **{media(medias):.4f}**")
     st.write(f"Desvio padrão das médias amostrais: **{desvio_padrao(medias):.4f}**")
@@ -298,6 +298,7 @@ with col_y:
 
 if var_x == var_y:
     st.warning("Escolha duas variáveis diferentes para X e Y.")
+
 else:
     df_xy = df[[var_x, var_y]].dropna()
     x_dados = df_xy[var_x].tolist()
@@ -317,7 +318,7 @@ else:
     ax_reg.set_ylabel(var_y)
     ax_reg.set_title(f"{var_y} em função de {var_x}")
     ax_reg.legend()
-    st.pyplot(fig_reg)
+    st.pyplot(fig_reg, width='content')
 
     st.write(f"**Equação:** {var_y} = {a:.4f} + {b:.4f} × {var_x}")
     st.write(f"**Correlação de Pearson (r):** {r:.4f}")
