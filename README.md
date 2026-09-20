@@ -82,4 +82,4 @@ Para executar os testes, rode o comando:
 
 # Demonstração da aplicação
 
-![gif](/assets/img/demo_PG.gif)
+![gif](assets/img/demo_PG.gif)
