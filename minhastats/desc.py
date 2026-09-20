@@ -207,22 +207,18 @@ def detec_outliers(dados):
         "limite_superior": lim_sup
     }
 
-# interpreta a assimetria de uma distribuição comparando média e mediana:
-# se forem aproximadamente iguais (dentro de uma margem baseada no desvio padrão),
-# a distribuição é considerada simétrica; se a média for maior, assimetria positiva
-# (cauda à direita); se for menor, assimetria negativa (cauda à esquerda)
-def intr_assim(dados):
-    med = media(dados)
-    medn = mediana(dados)
-    dp = desvio_padrao(dados)
+# A PDF (função densidade de probabilidade) da distribuição Normal descreve
+# a probabilidade relativa de um valor x ocorrer, dada a média e o desvio padrão de uma população. É a famosa "curva de sino"
+# Se dá por: f(x) = (1 / (dp * √(2π))) * e^(-(x-média)**2 / (2*dp**2))
+def pdf_norm(x, media, dp):
+    expoente = -((x - media) ** 2) / (2 * dp ** 2)
+    coef = 1 / (dp * math.sqrt(2 * math.pi))
+    return coef * math.exp(expoente)
 
-    margem = 0.05 * dp
-
-    if margem > abs(med - medn):
-        return f"Distribuição aproximadamente simétrica (média {med:.2f} ≈ mediana {medn:.2f})."
-    
-    elif med > medn:
-        return f"Assimetria positiva, cauda à direita (média {med:.2f} ≈ mediana {medn:.2f})"
-
-    elif med < medn:
-        return f"Assimetria negativa, cauda à esquerda (média {med:.2f} ≈ mediana {medn:.2f})"
+# A PDF da distribuição Exponencial modela o "tempo/magnitude até um evento raro", com muitos valores pequenos e poucos valores grandes (cauda longa à direita)
+# Só tem um parâmetro, lambda, estimado a partir dos dados como λ = 1 / média
+# Se dá por: f(x) = λ * e^(-λx), para x ≥ 0
+def pdf_exp(x, lam):
+    if x < 0:
+        return 0.0
+    return lam * math.exp(-lam * x)
